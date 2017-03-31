@@ -3,8 +3,22 @@
 	padding: 0;
 }
 
-.field,
-.tabrow,
-.tabh {
-	border: 1px brown solid;
+
+table {
+	border: 2px brown solid;
+
 }
+
+tr,
+td {
+	border-collapse: collapse;
+	width: 30px;
+	height: 30px;
+	text-align: center;	
+}
+
+.black {
+	background: black;
+}
+
+
