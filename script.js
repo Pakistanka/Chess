@@ -1,25 +1,41 @@
 //function chessBoard () {
 
-	var table = document.createElement('table');
+	var table = document.createElement('table'); //создание таблицы
 	var body = document.body;
 
-	var wrapper = document.createElement('div');
-	wrapper.classList.add('wrapper');
-	document.body.appendChild(wrapper);
+	var wrapper = document.createElement('div');//созданиие блока вокруг таблицы
+	wrapper.classList.add('wrapper'); //создание класса для wrapper
+	document.body.appendChild(wrapper); //добавление wrapper к body
 
 
-	for (var i = 0; i < 10; i++) {
+	for (var i = 0; i < 10; i++) { //создание 10 строк
 		var row = document.createElement('tr'); //строка
 		if(i == 0) { // если аргумент строго равен 0, то создать класс "топ"
 			row.classList.add('top');
 		}
 
-		for(var j = 0; j < 10; j++) {
+
+		for(var j = 0; j < 10; j++) { //создание 10 столбцов
 			var cell = document.createElement('td'); //столбец
-			if (j == 0 || j == 9) { //чтобы и в первый и последний столбец
-				cell.innerText = i;
+			
+			if(j == 0 || j == 9) { //вызов боковых цифр
+				if(i != 0 && i != 9){ //убрать 0 и 9 из столбца
+					cell.innerText = i;
+				}
 			}
-			cell.innerHTML = '1';
+
+			if(i == 0 || i == 9) { //вывод букв сверху и снизу
+				if(j!= 0 && j != 9) { //убрать 0 и 9 из столбца
+					cell.innerText = String.fromCharCode(65 + j - 1); //кодовое обозначение буквы
+					//вывод внутреннего HTML кода через string  и ASCII(CharCode 65)
+			}
+		}
+			if(i > 0 && i < 9 && j > 0 && j < 9) {
+				cell.classList.add(((i + j) % 2 == 0) ? 'black' : 'white');
+		}
+
+
+
 			row.appendChild(cell);//подчинение cell  к row
 		}
 		table.appendChild(row);//подчинение row  к table
@@ -28,58 +44,11 @@
 
 //}
 
-console.log(chessBoard);
-
-
-/*{
-	
-	var size = 10; // size of board
-
-	var parentElem = document.body;
-
-	var wrapper = document.createElement('div');
-	wrapper.classList.add = 'wrapper';
-	parentElem.appendChild(wrapper);
-
-	for (var i = 0; i < 10; i++) {
-
-		var div = document.createElement('div');
-		div.classList.add('top', 'side');
-		wrapper.appendChild(div);
-
-		for (var j = 0; j < 10; j++) {
-
-			var div2 = document.createElement('div');
-			div2.classList.add('black', 'white')
-			wrapper.appendChild(div2);
-		}
-	}
-	
-	function addLetters() {
-		var letters = [' ' , 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', ' ']; //letters
-		document.getElementsByTagName('div')[1].innerText = 'A';
-		document.getElementsByTagName('div')[2].innerText = 'B';
-		document.getElementsByTagName('div')[3].innerText = 'C';
-		document.getElementsByTagName('div')[4].innerText = 'D';
-		document.getElementsByTagName('div')[5].innerText = 'E';
-		document.getElementsByTagName('div')[6].innerText = 'F';
-		document.getElementsByTagName('div')[7].innerText = 'G';
-		document.getElementsByTagName('div')[8].innerText = 'H';
-	}
-
-	function addNumbers() {
-		var numbers = [0, 8, 7, 6, 5, 4, 3, 2, 1]; //numbers
-		document.getElementsByTagName('div2')[1].innerText = 8;
-		document.getElementsByTagName('div2')[2].innerText = 7;
-		document.getElementsByTagName('div2')[3].innerText = 6;
-		document.getElementsByTagName('div2')[4].innerText = 5;
-		document.getElementsByTagName('div2')[5].innerText = 4;
-		document.getElementsByTagName('div2')[6].innerText = 3;
-		document.getElementsByTagName('div2')[7].innerText = 2;
-		document.getElementsByTagName('div2')[8].innerText = 1;
-	}
-
-
-}
-
-console.log(chessBoard);*/
+/*	if(i > 0 && i < 9 && j > 0 && j < 9) {
+				if(i > 6 && i < 8 && j > 6 && j < 9) {
+					cell.innerText = String.fromCharCode(&#9823; + j - 1);
+				}
+				if(i > 7 && i < 9 && j > 6 && j < 9) {
+					cell.innerText = [&#9820; &#9822; &#9821; &#9819; &#9818; &#9821; &#9820;];
+					}
+		}*/
