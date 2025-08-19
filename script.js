@@ -1,110 +1,99 @@
-//function chessBoard () {
+const wrapper = document.querySelector('.wrapper');
+const table = document.createElement('table');
+wrapper.appendChild(table);
 
-	var table = document.createElement('table'); //создание таблицы
-	var body = document.body;
+const boardSize = 8;
+const letters = 'ABCDEFGH'.split('');
 
-	var wrapper = document.createElement('div');//созданиие блока вокруг таблицы
-	wrapper.classList.add('wrapper'); //создание класса для wrapper
-	document.body.appendChild(wrapper); //добавление wrapper к body
+// Initial game state
+const gameState = [
+  ['bR', 'bN', 'bB', 'bQ', 'bK', 'bB', 'bN', 'bR'],
+  ['bP', 'bP', 'bP', 'bP', 'bP', 'bP', 'bP', 'bP'],
+  [null, null, null, null, null, null, null, null],
+  [null, null, null, null, null, null, null, null],
+  [null, null, null, null, null, null, null, null],
+  [null, null, null, null, null, null, null, null],
+  ['wP', 'wP', 'wP', 'wP', 'wP', 'wP', 'wP', 'wP'],
+  ['wR', 'wN', 'wB', 'wQ', 'wK', 'wB', 'wN', 'wR']
+];
 
+const pieceIcons = {
+  wK: '&#9812;', wQ: '&#9813;', wR: '&#9814;', wB: '&#9815;', wN: '&#9816;', wP: '&#9817;',
+  bK: '&#9818;', bQ: '&#9819;', bR: '&#9820;', bB: '&#9821;', bN: '&#9822;', bP: '&#9823;',
+};
 
-	for (var i = 0; i < 10; i++) { //создание 10 строк
-		var row = document.createElement('tr'); //строка
-		if(i == 0) { // если аргумент строго равен 0, то создать класс "топ"
-			row.classList.add('top');
-		}
+// Render board
+function renderBoard() {
+  table.innerHTML = '';
 
+  for (let i = 0; i <= boardSize + 1; i++) {
+    const row = document.createElement('tr');
 
-		for(var j = 0; j < 10; j++) { //создание 10 столбцов
-			var cell = document.createElement('td'); //столбец
-			
-			if(j == 0 || j == 9) { //вызов боковых цифр
-				if(i != 0 && i != 9){ //убрать 0 и 9 из столбца
-					cell.innerText = i;
-				}
-			}
+    for (let j = 0; j <= boardSize + 1; j++) {
+      const cell = document.createElement('td');
 
-			if(i == 0 || i == 9) { //вывод букв сверху и снизу
-				if(j!= 0 && j != 9) { //убрать 0 и 9 из столбца
-					cell.innerText = String.fromCharCode(65 + j - 1); //кодовое обозначение буквы
-					//вывод внутреннего HTML кода через string  и ASCII(CharCode 65)
-			}
-		}
-			if(i > 0 && i < 9 && j > 0 && j < 9) {
-				cell.classList.add(((i + j) % 2 == 0) ? 'black' : 'white');
-		}
+      // Labels
+      if ((i === 0 || i === 9) && j > 0 && j < 9) {
+        cell.textContent = letters[j - 1];
+        cell.classList.add('label');
+      } else if ((j === 0 || j === 9) && i > 0 && i < 9) {
+        cell.textContent = 9 - i;
+        cell.classList.add('label');
+      }
 
-		if(i > 0 && i < 9 && j > 0 && j < 9) {
-			if (i == 1) {
-				var whiteFigures =  {
-			A1: '&#9814;', 
-			B1: '&#9816;', 
-			C1: '&#9815;', 
-			D1: '&#9813;',
-			E1: '&#9812;',
-			F1: '&#9815;',
-			G1: '&#9816;',
-			H1: '&#9814;'
-		};
-				cell.innerHTML = whiteFigures;
-			}
-			if (i == 2) {
-				var whitePawn = {
-					A2: '&#9817;', 
-					B2: '&#9817;', 
-					C2: '&#9817;', 
-					D2: '&#9817;',
-					E2: '&#9817;',
-					F2: '&#9817;',
-					G2: '&#9817;',
-					H2: '&#9817;'
-				};
-				cell.innerHTML = whitePawn;
-			}
-			if (i == 7) {
-				var blackPawn = {
-					A7: '&#9823;', 
-					B7: '&#9823;', 
-					C7: '&#9823;', 
-					D7: '&#9823;',
-					E7: '&#9823;',
-					F7: '&#9823;',
-					G7: '&#9823;',
-					H7: '&#9823;'
-				};
-				cell.innerHTML = blackPawn;
-			}
-			if (i == 8) {
-				var blackFigures =  {
-			A8: '&#9820;', 
-			B8: '&#9822;', 
-			C8: '&#9821;', 
-			D8: '&#9819;',
-			E8: '&#9818;',
-			F8: '&#9821;',
-			G8: '&#9822;',
-			H8: '&#9820;'
-		};
-				cell.innerHTML = blackFigures;
-			}
-		}
-			
-			//whiteFigures[String.fromCharCode((65+i) + j)];
+      // Playable cells
+      if (i > 0 && i < 9 && j > 0 && j < 9) {
+        const y = i - 1;
+        const x = j - 1;
+        const isBlack = (i + j) % 2 === 0;
+        cell.classList.add(isBlack ? 'black' : 'white');
+        cell.dataset.x = x;
+        cell.dataset.y = y;
 
+        // Enable drop target
+        cell.addEventListener('dragover', (e) => e.preventDefault());
+        cell.addEventListener('drop', (e) => {
+          e.preventDefault();
+          const fromX = Number(e.dataTransfer.getData('fromX'));
+          const fromY = Number(e.dataTransfer.getData('fromY'));
+          const toX = Number(cell.dataset.x);
+          const toY = Number(cell.dataset.y);
+          movePiece(fromX, fromY, toX, toY);
+        });
 
-			row.appendChild(cell);//подчинение cell  к row
-		}
-		table.appendChild(row);//подчинение row  к table
-	}
-	wrapper.appendChild(table);//подчинение table  к wrapper
+        // Add piece if exists
+        const piece = gameState[y][x];
+        if (piece) {
+          const pieceDiv = document.createElement('div');
+          pieceDiv.innerHTML = pieceIcons[piece];
+          pieceDiv.classList.add('piece');
+          pieceDiv.draggable = true;
+          pieceDiv.dataset.x = x;
+          pieceDiv.dataset.y = y;
 
-//}
+          pieceDiv.addEventListener('dragstart', (e) => {
+            e.dataTransfer.setData('fromX', e.target.dataset.x);
+            e.dataTransfer.setData('fromY', e.target.dataset.y);
+          });
 
-/*	if(i > 0 && i < 9 && j > 0 && j < 9) {
-				if(i > 6 && i < 8 && j > 6 && j < 9) {
-					cell.innerText = String.fromCharCode(&#9823; + j - 1);
-				}
-				if(i > 7 && i < 9 && j > 6 && j < 9) {
-					cell.innerText = [&#9820; &#9822; &#9821; &#9819; &#9818; &#9821; &#9820;];
-					}
-		}*/
+          cell.appendChild(pieceDiv);
+        }
+      }
+
+      row.appendChild(cell);
+    }
+
+    table.appendChild(row);
+  }
+}
+
+function movePiece(fromX, fromY, toX, toY) {
+  const piece = gameState[fromY][fromX];
+  if (!piece) return;
+  gameState[toY][toX] = piece;
+  gameState[fromY][fromX] = null;
+  renderBoard();
+}
+
+// Initial render
+renderBoard();
